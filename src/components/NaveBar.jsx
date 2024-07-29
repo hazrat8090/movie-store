@@ -3,14 +3,8 @@ import SearchBox from "./SearchBox";
 import Logo from "./Logo";
 import ResultsOfMovies from "./ResultsOfMovies";
 
-function NaveBar({ movies }) {
-  return (
-    <nav className="nav-bar">
-      <Logo />
-      <SearchBox />
-      <ResultsOfMovies movies={movies} />
-    </nav>
-  );
+function NaveBar({ children }) {
+  return <nav className="nav-bar">{children}</nav>;
 }
 
 export default NaveBar;
