@@ -1,7 +1,7 @@
 import "./index.css";
 import NaveBar from "./components/NaveBar";
 import MainMenue from "./components/MainMenue";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Logo from "./components/Logo";
 import SearchBox from "./components/SearchBox";
 import ResultsOfMovies from "./components/ResultsOfMovies";
@@ -11,6 +11,8 @@ import WatchedMoviesSummary from "./components/WatchedMoviesSummary";
 import ListOfWatchedMovies from "./components/ListOfWatchedMovies";
 import RatingStars from "./components/RatingStars";
 import TestStars from "./components/TestStars";
+import Loader from "./components/Loader";
+import ErrorMessage from "./components/ErrorMessage";
 
 const tempMovieData = [
   {
@@ -59,15 +61,52 @@ const tempWatchedData = [
   },
 ];
 
+const KEY = "fef5743f";
+
 export default function App() {
-  const [movies, setMovies] = useState(tempMovieData);
+  const [query, setQuery] = useState("");
+  const [movies, setMovies] = useState([]);
   const [watched, setWatched] = useState(tempWatchedData);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  useEffect(
+    function () {
+      async function fetchMovies() {
+        try {
+          setError("");
+          setIsLoading(true);
+          const res = await fetch(
+            `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`
+          );
+          if (!res.ok)
+            throw new Error("Something Went Wrong With Fetching Movies");
+          const data = await res.json();
+          if (data.Response === "False") throw new Error("Movie Not Found");
+          setMovies(data.Search);
+          console.log(data);
+        } catch (err) {
+          console.error(err.message);
+          setError(err.message);
+        } finally {
+          setIsLoading(false);
+        }
+      }
+      if (query.length < 3) {
+        setMovies([]);
+        setError("");
+        return;
+      }
+      fetchMovies();
+    },
+    [query]
+  );
 
   return (
     <>
       <NaveBar>
         <Logo />
-        <SearchBox />
+        <SearchBox query={query} setQuery={setQuery} />
         <ResultsOfMovies movies={movies} />
       </NaveBar>
       <RatingStars
@@ -93,7 +132,10 @@ export default function App() {
 
       <MainMenue>
         <BoxMovies>
-          <ListOfUnwathcedMovies movies={movies} />
+          {/* {isLoading ? <Loader /> : <ListOfUnwathcedMovies movies={movies} />} */}
+          {isLoading && <Loader />}
+          {!isLoading && !error && <ListOfUnwathcedMovies movies={movies} />}
+          {error && <ErrorMessage message={error} />}
         </BoxMovies>
 
         <BoxMovies>

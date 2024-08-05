@@ -1,9 +1,6 @@
 import React from "react";
-import { useState } from "react";
 
-function SearchBox() {
-  const [query, setQuery] = useState("");
-
+function SearchBox({ query, setQuery }) {
   return (
     <input
       className="search"
