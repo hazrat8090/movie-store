@@ -9,10 +9,9 @@ import ListOfUnwathcedMovies from "./components/ListOfUnwatchedMovies";
 import BoxMovies from "./components/BoxMovies";
 import WatchedMoviesSummary from "./components/WatchedMoviesSummary";
 import ListOfWatchedMovies from "./components/ListOfWatchedMovies";
-import RatingStars from "./components/RatingStars";
-import TestStars from "./components/TestStars";
 import Loader from "./components/Loader";
 import ErrorMessage from "./components/ErrorMessage";
+import SelectedMovie from "./components/SelectedMovie";
 
 const tempMovieData = [
   {
@@ -66,9 +65,27 @@ const KEY = "fef5743f";
 export default function App() {
   const [query, setQuery] = useState("");
   const [movies, setMovies] = useState([]);
-  const [watched, setWatched] = useState(tempWatchedData);
+  const [watched, setWatched] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [selectedMovieId, setSelectedMovieId] = useState(null);
+
+  function handleSelectedMovieId(id) {
+    setSelectedMovieId(id);
+  }
+
+  function handleCloseMovie() {
+    setSelectedMovieId(null);
+  }
+
+  function handleAddWatchedMovie(movie) {
+    setWatched((watched) => [...watched, movie]);
+  }
+
+  function handleDeleteFromWatchedMovieList(id) {
+    setWatched((watched) => watched.filter((movie) => movie.imdbID !== id));
+    handleCloseMovie();
+  }
 
   useEffect(
     function () {
@@ -109,7 +126,7 @@ export default function App() {
         <SearchBox query={query} setQuery={setQuery} />
         <ResultsOfMovies movies={movies} />
       </NaveBar>
-      <RatingStars
+      {/* <RatingStars
         maxRating={15}
         messages={[
           "Awful",
@@ -128,23 +145,43 @@ export default function App() {
           "Amazin",
           "Outstanding",
         ]}
-      />
+      /> */}
 
       <MainMenue>
         <BoxMovies>
           {/* {isLoading ? <Loader /> : <ListOfUnwathcedMovies movies={movies} />} */}
           {isLoading && <Loader />}
-          {!isLoading && !error && <ListOfUnwathcedMovies movies={movies} />}
+          {!isLoading && !error && (
+            <ListOfUnwathcedMovies
+              movies={movies}
+              onSelected={handleSelectedMovieId}
+            />
+          )}
           {error && <ErrorMessage message={error} />}
         </BoxMovies>
 
         <BoxMovies>
-          <WatchedMoviesSummary watched={watched} />
-          <ListOfWatchedMovies watched={watched} />
+          {selectedMovieId ? (
+            <SelectedMovie
+              onSelected={selectedMovieId}
+              onClose={handleCloseMovie}
+              handleAddWatchedMovie={handleAddWatchedMovie}
+              watched={watched}
+            />
+          ) : (
+            <>
+              <WatchedMoviesSummary watched={watched} />
+              <ListOfWatchedMovies
+                watched={watched}
+                handleSelectedMovieId={handleSelectedMovieId}
+                onDeleteFromWatchedLis={handleDeleteFromWatchedMovieList}
+              />
+            </>
+          )}
         </BoxMovies>
       </MainMenue>
 
-      <TestStars />
+      {/* <TestStars /> */}
     </>
   );
 }

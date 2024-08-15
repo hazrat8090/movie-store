@@ -4,13 +4,8 @@ import PropTypes from "prop-types";
 
 const containerStyle = {
   display: "flex",
-  alignItem: "center",
-  gap: "16px",
-};
-
-const starStyle = {
-  display: "flex",
-  gap: "4px",
+  alignItems: "center",
+  gap: "5px",
 };
 
 RatingStars.propTypes = {
@@ -41,11 +36,19 @@ function RatingStars({
   }
 
   const textStyle = {
-    lineHight: "1",
+    lineHeight: "1",
     margin: "0",
     color,
-    fontSize: `${size}px`,
-    messages,
+    fontSize: `${size / 1.5}px`,
+    whiteSpace: "nowrap",
+  };
+
+  const starStyle = {
+    // width: `${size}px`,
+    // height: `${size}px`,
+    display: "flex",
+    alignItems: "center",
+    gap: "2px",
   };
 
   return (

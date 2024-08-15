@@ -1,7 +1,5 @@
 import React from "react";
 import { useState } from "react";
-import WatchedMoviesSummary from "./WatchedMoviesSummary";
-import ListOfWatchedMovies from "./ListOfWatchedMovies";
 
 function WatchedMovies({ children }) {
   const [isOpen2, setIsOpen2] = useState(true);
