@@ -78,7 +78,6 @@ function SelectedMovie({
       function callBack(e) {
         if (e.code === "Escape") {
           onClose();
-          console.log("the movie closeds");
         }
       }
       document.addEventListener("keydown", callBack);
